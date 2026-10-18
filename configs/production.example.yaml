@@ -1,0 +1,59 @@
+# Example production-shaped configuration.
+# Copy this file, replace hostnames/units, and validate it in CI before rollout.
+version: 1
+environment: production
+description: Edge API and data-plane checks for the production network.
+
+defaults:
+  timeout_seconds: 3.0
+  retries: 3
+  backoff_seconds: 0.5
+  max_backoff_seconds: 4.0
+
+services:
+  - name: nginx
+    type: command
+    command: ["systemctl", "is-active", "nginx.service"]
+    timeout_seconds: 5.0
+    tags: [ingress, systemd]
+
+  - name: edge-api
+    type: http
+    url: https://api.example.internal/healthz
+    expected_status: [200, 204]
+    headers:
+      User-Agent: netops-production-probe
+    timeout_seconds: 5.0
+    retries: 2
+    tags: [edge, https]
+
+  - name: postgres-primary
+    type: tcp
+    host: db-primary.example.internal
+    port: 5432
+    timeout_seconds: 3.0
+    tags: [data, tcp]
+
+log_sources:
+  - name: nginx-journal
+    type: journalctl
+    unit: nginx.service
+    since: "-20 min"
+    max_lines: 300
+    timeout_seconds: 15.0
+
+  - name: edge-api-file
+    type: file
+    path: /var/log/netops/edge-api.log
+    max_lines: 300
+    required: false
+
+  - name: socket-summary
+    type: command
+    command: ["ss", "-s"]
+    max_lines: 80
+    timeout_seconds: 10.0
+    required: false
+
+report:
+  title: Production Edge Network Operations Report

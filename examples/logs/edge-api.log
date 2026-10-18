@@ -1,0 +1,11 @@
+2026-08-10T09:58:01Z INFO  edge-api request_id=7f2a method=GET path=/v1/orders status=200 latency_ms=18
+2026-08-10T09:58:02Z INFO  edge-api request_id=91c0 method=GET path=/v1/orders/42 status=200 latency_ms=24
+2026-08-10T09:58:04Z WARN  edge-api upstream=inventory latency_ms=812 warning="slow upstream response"
+2026-08-10T09:58:05Z INFO  edge-api request_id=b320 method=POST path=/v1/orders status=201 latency_ms=41
+Authorization: Bearer demo-token-do-not-use
+2026-08-10T09:58:07Z INFO  edge-api request_id=1d44 method=GET path=/healthz status=200 latency_ms=2
+2026-08-10T09:58:10Z ERROR edge-api request_id=4c90 method=GET path=/v1/orders status=503 error="inventory unavailable"
+2026-08-10T09:58:11Z INFO  edge-api request_id=4c90 retry=1 path=/v1/orders status=200 latency_ms=37
+2026-08-10T09:58:13Z INFO  edge-api request_id=85ee method=GET path=/healthz status=200 latency_ms=3
+2026-08-10T09:58:15Z INFO  edge-api request_id=2fb1 method=DELETE path=/v1/orders/41 status=204 latency_ms=29
+2026-08-10T09:58:16Z INFO  edge-api request_id=0b76 method=GET path=/v1/orders status=200 latency_ms=21

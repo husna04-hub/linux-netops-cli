@@ -1,0 +1,51 @@
+version: 1
+environment: lab
+description: Local integration lab for the edge network stack.
+
+defaults:
+  timeout_seconds: 2.0
+  retries: 2
+  backoff_seconds: 0.2
+  max_backoff_seconds: 1.0
+
+services:
+  - name: edge-api
+    type: http
+    url: http://127.0.0.1:8080/healthz
+    expected_status: 200
+    retries: 3
+    tags: [edge, http]
+    description: Public edge API health endpoint.
+
+  - name: redis-cache
+    type: tcp
+    host: 127.0.0.1
+    port: 6379
+    required: false
+    tags: [data, tcp]
+    description: Cache reachability check; optional in the lab.
+
+  - name: systemd-timesync
+    type: command
+    command: ["systemctl", "is-active", "systemd-timesyncd.service"]
+    required: false
+    timeout_seconds: 3.0
+    tags: [host, systemd]
+    description: Host clock synchronization unit.
+
+log_sources:
+  - name: edge-api
+    type: file
+    path: ../examples/logs/edge-api.log
+    max_lines: 100
+    required: true
+
+  - name: system-journal
+    type: journalctl
+    unit: netops-edge.service
+    since: "-15 min"
+    max_lines: 150
+    required: false
+
+report:
+  title: Edge Network Operations Report

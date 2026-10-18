@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Thin launcher for environments without an installed console script.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+if [[ -x "${PROJECT_DIR}/.venv/bin/netops" ]]; then
+  exec "${PROJECT_DIR}/.venv/bin/netops" "$@"
+fi
+
+export PYTHONPATH="${PROJECT_DIR}/src${PYTHONPATH:+:${PYTHONPATH}}"
+exec python3 -m netops "$@"
